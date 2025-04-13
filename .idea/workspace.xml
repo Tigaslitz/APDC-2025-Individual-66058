@@ -1,43 +1,99 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="e47d6e29-5c4d-4cd3-85b5-914822d7b32b" name="Changes" comment="" />
+    <list default="true" id="e47d6e29-5c4d-4cd3-85b5-914822d7b32b" name="Changes" comment="Copied classes files to structure project">
+      <change afterPath="$PROJECT_DIR$/src/main/java/Enum/Roles.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/Enum/States.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/filters/AuthFilter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/resources/RemoveResource.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/util/AppStartUp.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/util/ChangeAccStatusData.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/util/ChangeRoleData.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/util/RemoveUserData.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/util/ValidityData.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/filters/AdditionalResponseHeadersFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/filters/AdditionalResponseHeadersFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/resources/ComputationResource.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/resources/ComputationResource.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/resources/LoginResource.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/resources/LoginResource.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/resources/MediaResource.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/resources/RegisterResource.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/resources/RegisterResource.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/util/AuthToken.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/util/AuthToken.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/util/LoginData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/util/LoginData.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/util/RegisterData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/util/RegisterData.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/appengine-web.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/appengine-web.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/index.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/index.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/web.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/web.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/index.html" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Enum" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="5cbff4ebbe9beae9a4ac8a787817ad3639836bb1" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "Tigaslitz"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Tigaslitz&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/Tigaslitz/APDC-2025-Individual-66058.git",
-    "accountId": "2bc52337-6289-4ff9-a1de-08ee8197fc9b"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Tigaslitz/APDC-2025-Individual-66058.git&quot;,
+    &quot;accountId&quot;: &quot;2bc52337-6289-4ff9-a1de-08ee8197fc9b&quot;
   }
-}]]></component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 6
-}]]></component>
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 6
+}</component>
   <component name="ProjectId" id="2vXq22k0dcnFPTh8To0d45tjNIB" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/PedroNuno/Documents/APDC-2025-Individual-66058"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/PedroNuno/Documents/APDC-2025-Individual-66058&quot;
   }
-}]]></component>
+}</component>
+  <component name="RunManager">
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="APDC-2025-Individual-66058" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="APDC-2025-Individual-66058" />
+      <option name="filePath" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -47,6 +103,15 @@
       <option name="presentableId" value="Default" />
       <updated>1744301555337</updated>
     </task>
+    <task id="LOCAL-00001" summary="Copied classes files to structure project">
+      <option name="closed" value="true" />
+      <created>1744302484827</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1744302484827</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -59,5 +124,9 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Copied classes files to structure project" />
+    <option name="LAST_COMMIT_MESSAGE" value="Copied classes files to structure project" />
   </component>
 </project>

@@ -1,10 +1,8 @@
-package pt.unl.fct.di.apdc.firstwebapp.resources;
+package resources;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Logger;
+
 
 import org.apache.commons.codec.digest.DigestUtils;
 
@@ -37,8 +35,9 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.Response.Status;
-import pt.unl.fct.di.apdc.firstwebapp.util.AuthToken;
-import pt.unl.fct.di.apdc.firstwebapp.util.LoginData;
+import util.AuthToken;
+import util.LoginData;
+import util.ValidityData;
 
 @Path("/login")
 @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
@@ -65,21 +64,6 @@ public class LoginResource {
 
 	}
 
-	@POST
-	@Path("/")
-	@Consumes(MediaType.APPLICATION_JSON)
-	public Response doLogin(LoginData data) {
-		LOG.fine(LOG_MESSAGE_LOGIN_ATTEMP + data.username);
-
-		if (data.username.equals("user") && data.password.equals("password")) {
-			AuthToken at = new AuthToken(data.username);
-			return Response.ok(g.toJson(at)).build();
-		}
-		return Response.status(Status.FORBIDDEN)
-				.entity(MESSAGE_INVALID_CREDENTIALS)
-				.build();
-	}
-
 	@GET
 	@Path("/{username}")
 	public Response checkUsernameAvailable(@PathParam("username") String username) {
@@ -91,112 +75,10 @@ public class LoginResource {
 	}
 
 	@POST
-	@Path("/v1")
+	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response doLoginV1(LoginData data) {
-		LOG.fine(LOG_MESSAGE_LOGIN_ATTEMP + data.username);
-
-		Key userKey = userKeyFactory.newKey(data.username);
-
-		Entity user = datastore.get(userKey);
-		if (user != null) {
-			String hashedPWD = (String) user.getString(USER_PWD);
-			if (hashedPWD.equals(DigestUtils.sha512Hex(data.password))) {
-				LOG.info(LOG_MESSAGE_LOGIN_SUCCESSFUL + data.username);
-				AuthToken token = new AuthToken(data.username);
-				return Response.ok(g.toJson(token)).build();
-			} else {
-				LOG.warning(LOG_MESSAGE_WRONG_PASSWORD + data.username);
-				return Response.status(Status.FORBIDDEN)
-						.entity(MESSAGE_INVALID_CREDENTIALS)
-						.build();
-			}
-		} else {
-			LOG.warning(LOG_MESSAGE_UNKNOW_USER + data.username);
-			return Response.status(Status.FORBIDDEN)
-					.entity(MESSAGE_INVALID_CREDENTIALS)
-					.build();
-		}
-	}
-
-	@POST
-	@Path("/v1a")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response doLoginV1a(LoginData data) {
-		LOG.fine(LOG_MESSAGE_LOGIN_ATTEMP + data.username);
-
-		Key userKey = userKeyFactory.newKey(data.username);
-
-		Entity user = datastore.get(userKey);
-		if (user != null) {
-			String hashedPWD = (String) user.getString(USER_PWD);
-			if (hashedPWD.equals(DigestUtils.sha512Hex(data.password))) {
-				user = Entity.newBuilder(user)
-						.set("user_login_time", Timestamp.now())
-						.build();
-				datastore.update(user);
-				LOG.info(LOG_MESSAGE_LOGIN_SUCCESSFUL + data.username);
-				AuthToken token = new AuthToken(data.username);
-				return Response.ok(g.toJson(token)).build();
-			} else {
-				LOG.warning(LOG_MESSAGE_WRONG_PASSWORD + data.username);
-				return Response.status(Status.FORBIDDEN)
-						.entity(MESSAGE_INVALID_CREDENTIALS)
-						.build();
-			}
-		} else {
-			LOG.warning(LOG_MESSAGE_UNKNOW_USER + data.username);
-			return Response.status(Status.FORBIDDEN)
-					.entity(MESSAGE_INVALID_CREDENTIALS)
-					.build();
-		}
-	}
-
-	@POST
-	@Path("/v1b")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response doLoginV1b(LoginData data) {
-		LOG.fine(LOG_MESSAGE_LOGIN_ATTEMP + data.username);
-
-		Key userKey = userKeyFactory.newKey(data.username);
-
-		Entity user = datastore.get(userKey);
-		if (user != null) {
-			String hashedPWD = user.getString(USER_PWD);
-			if (hashedPWD.equals(DigestUtils.sha512Hex(data.password))) {
-				KeyFactory logKeyFactory = datastore.newKeyFactory()
-						.addAncestor(PathElement.of("User", data.username))
-						.setKind("UserLog");
-				Key logKey = datastore.allocateId(logKeyFactory.newKey());
-				Entity userLog = Entity.newBuilder(logKey)
-						.set("user_login_time", Timestamp.now())
-						.build();
-				datastore.put(userLog);
-				LOG.info(LOG_MESSAGE_LOGIN_SUCCESSFUL + data.username);
-				AuthToken token = new AuthToken(data.username);
-				return Response.ok(g.toJson(token)).build();
-			} else {
-				LOG.warning(LOG_MESSAGE_WRONG_PASSWORD + data.username);
-				return Response.status(Status.FORBIDDEN)
-						.entity(MESSAGE_INVALID_CREDENTIALS)
-						.build();
-			}
-		} else {
-			LOG.warning(LOG_MESSAGE_UNKNOW_USER + data.username);
-			return Response.status(Status.FORBIDDEN)
-					.entity(MESSAGE_INVALID_CREDENTIALS)
-					.build();
-		}
-	}
-
-	@POST
-	@Path("/v2")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response doLoginV2(LoginData data,
+	public Response doLogin(LoginData data,
 			@Context HttpServletRequest request,
 			@Context HttpHeaders headers) {
 		LOG.fine(LOG_MESSAGE_LOGIN_ATTEMP + data.username);
@@ -216,11 +98,21 @@ public class LoginResource {
 		try {
 			Entity user = txn.get(userKey);
 			if (user == null) {
-				// Username does not exist
-				LOG.warning(LOG_MESSAGE_LOGIN_ATTEMP + data.username);
-				return Response.status(Status.FORBIDDEN)
-						.entity(MESSAGE_INVALID_CREDENTIALS)
+				Query<Entity> emailQuery = Query.newEntityQueryBuilder()
+						.setKind("User")
+						.setFilter(PropertyFilter.eq("user_email", data.username))
+						.setLimit(1)
 						.build();
+				QueryResults<Entity> results = datastore.run(emailQuery);
+				if (results.hasNext()) {
+					user = results.next();
+				}else {
+					// Username does not exist
+					LOG.warning(LOG_MESSAGE_LOGIN_ATTEMP + data.username);
+					return Response.status(Status.FORBIDDEN)
+							.entity(MESSAGE_INVALID_CREDENTIALS)
+							.build();
+				}
 			}
 
 			// We get the user stats from the storage
@@ -242,11 +134,12 @@ public class LoginResource {
 				Entity log = Entity.newBuilder(logKey)
 						.set("user_login_ip", request.getRemoteAddr())
 						.set("user_login_host", request.getRemoteHost())
-						.set("user_login_latlon", cityLatLong != null
+						//TODO: Apenas funciona se for na cloud, headers a null se corrido localmente
+						/*.set("user_login_latlon", cityLatLong != null
 								? StringValue.newBuilder(cityLatLong).setExcludeFromIndexes(true).build()
 								: StringValue.newBuilder("").setExcludeFromIndexes(true).build())
 						.set("user_login_city", headers.getHeaderString("X-AppEngine-City"))
-						.set("user_login_country", headers.getHeaderString("X-AppEngine-Country"))
+						.set("user_login_country", headers.getHeaderString("X-AppEngine-Country"))*/
 						.set("user_login_time", Timestamp.now())
 						.build();
 
@@ -265,7 +158,15 @@ public class LoginResource {
 				txn.commit();
 
 				// Return token
-				AuthToken token = new AuthToken(data.username);
+				String role = user.getString("user_role");
+				String verificador = UUID.randomUUID().toString();
+				Timestamp now = Timestamp.now();
+				// Adiciona 30 minutos em segundos
+				Timestamp expiration = Timestamp.ofTimeSecondsAndNanos(
+						now.getSeconds() + 30 * 60,
+						now.getNanos()
+				);
+				AuthToken token = new AuthToken(data.username, role, new ValidityData(now,expiration ,verificador));
 				LOG.info(LOG_MESSAGE_LOGIN_SUCCESSFUL + data.username);
 				return Response.ok(g.toJson(token)).build();
 			} else {

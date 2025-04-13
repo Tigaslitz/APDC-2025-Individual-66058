@@ -1,4 +1,4 @@
-package pt.unl.fct.di.apdc.firstwebapp.util;
+package util;
 
 public class LoginData {
 	
@@ -9,7 +9,7 @@ public class LoginData {
 		
 	}
 	
-	public LoginData(String username, String password) {
+	public LoginData(String username, String password, String role) {
 		this.username = username;
 		this.password = password;
 	}

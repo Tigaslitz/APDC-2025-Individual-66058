@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appengine-web-app xmlns="http://appengine.google.com/ns/1.0">
 
+  <application>adc-individual-66058</application>
+
   <sessions-enabled>false</sessions-enabled>
   <runtime>java21</runtime>
 
@@ -12,7 +14,6 @@
   <automatic-scaling>
   	<min-idle-instances>0</min-idle-instances>
   </automatic-scaling>
-
 
   <static-files>
     <include path="/**.html" expiration="1m" /> <!-- 1 minute, normal is 12h or more -->

@@ -1,6 +1,5 @@
-package pt.unl.fct.di.apdc.firstwebapp.resources;
+package resources;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -20,8 +19,8 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
-import pt.unl.fct.di.apdc.firstwebapp.util.LoginData;
-import pt.unl.fct.di.apdc.firstwebapp.util.RegisterData;
+
+import util.RegisterData;
 
 @Path("/register")
 public class RegisterResource {
@@ -34,65 +33,19 @@ public class RegisterResource {
 
 	public RegisterResource() {}	// Default constructor, nothing to do
 	
-	@POST
-	@Path("/v1")
-	@Consumes(MediaType.APPLICATION_JSON)
-	public Response registerUserV1(LoginData data) {
-		LOG.fine("Attempt to register user: " + data.username);
-	
-		Key userKey = datastore.newKeyFactory().setKind("User").newKey(data.username);
-		Entity user = Entity.newBuilder(userKey)
-						.set("user_pwd", DigestUtils.sha512Hex(data.password))
-						.set("user_creation_time", Timestamp.now())
-						.build();
-		datastore.put(user);
-		LOG.info("User registered " + data.username);
-		return Response.ok().entity(g.toJson(true)).build();
-	}
-	
-	@POST
-	@Path("/v2")
-	@Consumes(MediaType.APPLICATION_JSON)
-	public Response registerUserV2(RegisterData data) {
-		LOG.fine("Attempt to register user: " + data.username);
 
-		if(!data.validRegistration())
-			return Response.status(Status.BAD_REQUEST).entity("Missing or wrong parameter.").build();
-					
-		Key userKey = datastore.newKeyFactory().setKind("User").newKey(data.username);
-		Entity user = datastore.get(userKey);
-		
-		if(user != null)
-			return Response.status(Status.BAD_REQUEST).entity("User already exists.").build();
-		
-		user = Entity.newBuilder(userKey)
-				.set("user_name", data.name)
-				.set("user_pwd", DigestUtils.sha512Hex(data.password))
-				.set("user_email", data.email)
-				.set("user_creation_time", Timestamp.now())
-				.build();
-
-		// Concurrency problem...
-		// When we reach here, another client might have put() an entity with the same key...
-		
-		datastore.put(user);
-		LOG.info("User registered " + data.username);
-		
-		
-		return Response.ok().build();
-	}
-	
 	@POST
-	@Path("/v3")
+	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response registerUserV3(RegisterData data) {
-		LOG.fine("Attempt to register user: " + data.username);
+	public Response registerUser(RegisterData data) {
 
+		LOG.fine("Attempt to register user: " + data.username);
 		if (!data.validRegistration()) {
 			return Response.status(Status.BAD_REQUEST).entity("Missing or wrong parameter.").build();
 		}
 
 		Transaction txn = datastore.newTransaction();
+
 		try {
 			Key userKey = datastore.newKeyFactory().setKind("User").newKey(data.username);
 			Entity user = txn.get(userKey);
@@ -103,53 +56,38 @@ public class RegisterResource {
 				return Response.status(Status.CONFLICT).entity("User already exists.").build();
 			} else {
 				 // ... otherwise
-				user = Entity.newBuilder(userKey).set("user_name", data.name)
-						.set("user_pwd", DigestUtils.sha512Hex(data.password)).set("user_email", data.email)
-						.set("user_creation_time", Timestamp.now()).build();
+				Entity.Builder builder = Entity.newBuilder(userKey).set("user_email", data.email)
+						.set("user_pwd", DigestUtils.sha512Hex(data.password))
+						.set("user_name", data.name)
+						.set("user_phone", data.phone)
+						.set("user_privacy", data.privacy)
+						.set("user_role", "enduser")		//By default
+						.set("account_status", "DESATIVADA")
+						.set("user_creation_time", Timestamp.now());		//By default
+
+				// Opcionais
+				if (data.nif != null) builder.set("user_nif", data.nif);
+				if (data.address != null) builder.set("user_address", data.address);
+				if (data.employer != null) builder.set("user_employer", data.employer);
+				if (data.employerNif != null) builder.set("employer_nif", data.employerNif);
+				if (data.job != null) builder.set("user_job", data.job);
+				if (data.identification != null) builder.set("user_identification", data.identification);
+				if (data.photo != null) builder.set("user_photo", data.photo); // cuidado se for imagem binária
+
 				// get() followed by put() inside a transaction is ok...
-				txn.put(user);
+				txn.put(builder.build());
 				txn.commit();
 				LOG.info("User registered " + data.username);
 				return Response.ok().build();
 			}
 		}
 		catch (DatastoreException e) {
+			LOG.fine("erro");
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.toString()).build();
 		} finally {
 			if (txn.isActive()) {
 				txn.rollback();
 			}
-		}
-	}	
-
-	@POST
-	@Path("/v4")
-	@Consumes(MediaType.APPLICATION_JSON)
-	public Response registerUserV4(RegisterData data) {
-		LOG.fine("Attempt to register user: " + data.username);
-		
-		if(!data.validRegistration())
-			return Response.status(Status.BAD_REQUEST).entity("Missing or wrong parameter.").build();
-		
-		
-		try {
-			Key userKey = datastore.newKeyFactory().setKind("User").newKey(data.username);
-			
-			Entity user = Entity.newBuilder(userKey)
-					.set("user_name", data.name)
-					.set("user_pwd", DigestUtils.sha512Hex(data.password))
-					.set("user_email", data.email)
-					.set("user_creation_time", Timestamp.now())
-					.build();
-
-			datastore.add(user);
-			LOG.info("User registered " + data.username);
-			
-			return Response.ok().build();
-		}
-		catch(DatastoreException e) {
-			LOG.log(Level.ALL, e.toString());
-			return Response.status(Status.BAD_REQUEST).entity(e.getReason()).build();
 		}
 	}
 }
