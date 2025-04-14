@@ -131,17 +131,15 @@ public class LoginResource {
 				// Login successful
 				// Construct the logs
 				String cityLatLong = headers.getHeaderString("X-AppEngine-CityLatLong");
-				Entity log = Entity.newBuilder(logKey)
+				Entity.Builder builder = Entity.newBuilder(logKey)
 						.set("user_login_ip", request.getRemoteAddr())
-						.set("user_login_host", request.getRemoteHost())
-						//TODO: Apenas funciona se for na cloud, headers a null se corrido localmente
-						/*.set("user_login_latlon", cityLatLong != null
-								? StringValue.newBuilder(cityLatLong).setExcludeFromIndexes(true).build()
-								: StringValue.newBuilder("").setExcludeFromIndexes(true).build())
-						.set("user_login_city", headers.getHeaderString("X-AppEngine-City"))
-						.set("user_login_country", headers.getHeaderString("X-AppEngine-Country"))*/
-						.set("user_login_time", Timestamp.now())
-						.build();
+						.set("user_login_host", request.getRemoteHost());
+						if (cityLatLong != null) {
+							builder.set("user_login_latlon", StringValue.newBuilder(cityLatLong).setExcludeFromIndexes(true).build());
+							builder.set("user_login_city", headers.getHeaderString("X-AppEngine-City"));
+							builder.set("user_login_country", headers.getHeaderString("X-AppEngine-Country"));
+						}
+						builder.set("user_login_time", Timestamp.now());
 
 				// Get the user statistics and updates it
 				// Copying information every time a user logins may not be a good solution
@@ -154,7 +152,7 @@ public class LoginResource {
 						.build();
 
 				// Batch operation
-				txn.put(log, ustats);
+				txn.put(builder.build(), ustats);
 				txn.commit();
 
 				// Return token

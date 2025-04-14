@@ -82,11 +82,11 @@ public class RemoveResource {
                 return Response.ok().entity("User account removed successfully").build();
             }else {
                 txn.rollback();
-                return Response.status(Response.Status.FORBIDDEN).entity("You are not authorized to change this role").build();
+                return Response.status(Response.Status.FORBIDDEN).entity("You are not authorized to remove this account").build();
             }
         } catch (Exception e) {
             txn.rollback();
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error updating role").build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error removing account").build();
         } finally {
             if (txn.isActive()) {
                 txn.rollback();

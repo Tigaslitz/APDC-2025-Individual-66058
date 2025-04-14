@@ -1,6 +1,5 @@
 package filters;
 
-import com.google.api.client.http.HttpHeaders;
 import com.google.cloud.Timestamp;
 import com.google.cloud.datastore.Datastore;
 import com.google.cloud.datastore.DatastoreOptions;
@@ -12,12 +11,9 @@ import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.Provider;
-import resources.ComputationResource;
-import resources.UpdateResource;
 import util.AuthToken;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.logging.Logger;
 
 @Provider
