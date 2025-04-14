@@ -34,12 +34,10 @@ public class RemoveResource {
     @POST
     @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response removeUser(RemoveUserData target, @Context HttpServletRequest request, @Context HttpHeaders headers) {
+    public Response removeUser(RemoveUserData target, @Context HttpServletRequest request) {
         LOG.fine("Attempt to remove user: " + target.target);
 
-        String authHeader = headers.getHeaderString("Authorization");
-        String tokenStr = authHeader.substring("Bearer ".length());
-        AuthToken token = g.fromJson(tokenStr, AuthToken.class);
+        AuthToken token = (AuthToken) request.getAttribute("authToken");
         String loggedInUsername = token.username;
 
         Key LoggedInUserKey = userKeyFactory.newKey(loggedInUsername);

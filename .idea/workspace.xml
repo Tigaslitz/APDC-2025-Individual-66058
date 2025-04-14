@@ -4,31 +4,21 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e47d6e29-5c4d-4cd3-85b5-914822d7b32b" name="Changes" comment="Copied classes files to structure project">
-      <change afterPath="$PROJECT_DIR$/src/main/java/Enum/Roles.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/Enum/States.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/filters/AuthFilter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/resources/RemoveResource.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/util/AppStartUp.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/util/ChangeAccStatusData.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/util/ChangeRoleData.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/util/RemoveUserData.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/util/ValidityData.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+    <list default="true" id="e47d6e29-5c4d-4cd3-85b5-914822d7b32b" name="Changes" comment="Op6 to Op8 implemented and tested (not intensively)">
+      <change afterPath="$PROJECT_DIR$/src/main/java/Enum/Adjudicacao.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/Enum/Privacy.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/Enum/WorkState.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/resources/LogoutResource.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/resources/WorkSheetResource.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/util/WorksheetData.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/filters/AdditionalResponseHeadersFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/filters/AdditionalResponseHeadersFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/filters/AuthFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/filters/AuthFilter.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/resources/ComputationResource.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/resources/ComputationResource.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/resources/LoginResource.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/resources/LoginResource.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/resources/MediaResource.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/resources/RegisterResource.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/resources/RegisterResource.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/util/AuthToken.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/util/AuthToken.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/util/LoginData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/util/LoginData.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/util/RegisterData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/util/RegisterData.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/appengine-web.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/appengine-web.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/index.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/index.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/resources/RemoveResource.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/resources/RemoveResource.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/resources/UpdateResource.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/resources/UpdateResource.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/logging.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/logging.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/web.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/web.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -111,7 +101,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744302484827</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Op6 to Op8 implemented and tested (not intensively)">
+      <option name="closed" value="true" />
+      <created>1744563795632</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1744563795632</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -127,6 +125,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Copied classes files to structure project" />
-    <option name="LAST_COMMIT_MESSAGE" value="Copied classes files to structure project" />
+    <MESSAGE value="Op6 to Op8 implemented and tested (not intensively)" />
+    <option name="LAST_COMMIT_MESSAGE" value="Op6 to Op8 implemented and tested (not intensively)" />
   </component>
 </project>

@@ -1,18 +1,18 @@
 package resources;
 
-import java.io.IOException;
-import java.net.URI;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.Clock;
-import java.time.Instant;
-import java.util.Date;
-import java.util.logging.Level;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
-import com.google.cloud.tasks.v2.HttpMethod;
+import com.google.cloud.datastore.*;
+import com.google.cloud.datastore.StructuredQuery.CompositeFilter;
+import com.google.cloud.datastore.StructuredQuery.PropertyFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
@@ -20,27 +20,19 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.HttpHeaders;
 
 
-import com.google.cloud.tasks.v2.*;
 import com.google.gson.Gson;
-import com.google.protobuf.Timestamp;
-import com.google.cloud.datastore.Datastore;
-import com.google.cloud.datastore.DatastoreOptions;
-import com.google.cloud.datastore.Entity;
-import com.google.cloud.datastore.Key;
-import com.google.cloud.datastore.Transaction;
-
-import org.apache.commons.logging.Log;
 import util.AuthToken;
 import util.ChangeAccStatusData;
 import util.ChangeRoleData;
 import Enum.Roles;
 import Enum.States;
+import util.ListUsersData;
 
 @Path("/utils")
-@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8") 
+@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 public class ComputationResource {
 
-	private static final Logger LOG = Logger.getLogger(ComputationResource.class.getName()); 
+	private static final Logger LOG = Logger.getLogger(ComputationResource.class.getName());
 	private final Gson g = new Gson();
 
 	private static final Datastore datastore = DatastoreOptions.getDefaultInstance().getService();
@@ -49,68 +41,13 @@ public class ComputationResource {
 
 	public ComputationResource() {} //nothing to be done here @GET
 
-	@GET
-	@Path("/hello")
-	@Produces(MediaType.TEXT_PLAIN)
-	public Response hello() throws IOException{
-		try {
-			throw new IOException("UPS");
-		} catch (Exception e) {
-			LOG.log(Level.SEVERE, "Exception on Method /hello", e);
-			return Response.temporaryRedirect(URI.create("/error/500.html")).build();
-		}
-	}
-	
-	@GET
-	@Path("/time")
-	public Response getCurrentTime() {
-
-		LOG.fine("Replying to date request.");
-		return Response.ok().entity(g.toJson(fmt.format(new Date()))).build();
-	}
-	
-	@GET
-	@Path("/compute")
-	public Response triggerExecuteComputeTask() throws IOException {
-		String projectId = "jedi-master-v5-453321";
-		String queueName = "Default";
-		String location = "europe-west6";
-		LOG.log(Level.INFO, projectId + " :: " + queueName + " :: " + location );
-
-		try (CloudTasksClient client = CloudTasksClient.create()) {
-			String queuePath = QueueName.of(projectId, location, queueName).toString();
-			Task.Builder taskBuilder = Task.newBuilder().setAppEngineHttpRequest(AppEngineHttpRequest.newBuilder()
-							.setRelativeUri("/rest/utils/compute").setHttpMethod(HttpMethod.POST).build());
-
-			taskBuilder.setScheduleTime(Timestamp.newBuilder().setSeconds(Instant.now(Clock.systemUTC()).getEpochSecond()));
-			
-			client.createTask(queuePath, taskBuilder.build());
-		} 
-		return Response.ok().build();
-	}
-	
-	@POST
-	@Path("/compute")
-	public Response executeComputeTask() {
-		LOG.fine("Starting to execute computation tasks");
-		try {
-			Thread.sleep(60*1000*10); //10 min...
-		} catch(Exception e) {
-			LOG.logp(Level.SEVERE,  this.getClass().getCanonicalName(), "executeComputeTask", "An exception has occured");
-			return Response.serverError().build();
-		} //Simulates 60s execution
-		return Response.ok().build();
-	}
-
 	@POST
 	@Path("/changeRole")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response changeRole(ChangeRoleData data, @Context HttpServletRequest request,@Context HttpHeaders headers) {
+	public Response changeRole(ChangeRoleData data, @Context HttpServletRequest request) {
+		AuthToken token = (AuthToken) request.getAttribute("authToken");
 
-		String authHeader = headers.getHeaderString("Authorization");
-		String tokenStr = authHeader.substring("Bearer ".length());
-		AuthToken token = g.fromJson(tokenStr, AuthToken.class);
 		String loggedInUsername = token.username;
 
 		Key loggedInKey = datastore.newKeyFactory().setKind("User").newKey(loggedInUsername);
@@ -198,25 +135,20 @@ public class ComputationResource {
 	@Path("/changeStatus")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response changeAccountState(ChangeAccStatusData data, @Context HttpServletRequest request, @Context HttpHeaders headers) {
+	public Response changeAccountState(ChangeAccStatusData data, @Context HttpServletRequest request) {
 
-		String authHeader = headers.getHeaderString("Authorization");
-		String tokenStr = authHeader.substring("Bearer ".length());
-		AuthToken token = g.fromJson(tokenStr, AuthToken.class);
+		AuthToken token = (AuthToken) request.getAttribute("authToken");
+
 		String loggedInUsername = token.username;
 
-		LOG.info("merda "+loggedInUsername);
 		Key loggedInKey = datastore.newKeyFactory().setKind("User").newKey(loggedInUsername);
-		LOG.info("merda "+loggedInKey);
 		Key targetUserKey = datastore.newKeyFactory().setKind("User").newKey(data.target);
-		LOG.info("merda "+targetUserKey);
 
 		Transaction txn = datastore.newTransaction();
 
 		try {
 			Entity loggedInUser = txn.get(loggedInKey);
 			Entity targetUser = txn.get(targetUserKey);
-			LOG.info("merda "+loggedInUser + " " + targetUser );
 
 			if (loggedInUser == null) {
 				txn.rollback();
@@ -228,16 +160,14 @@ public class ComputationResource {
 			}
 
 			String loggedInRole =  loggedInUser.getString("user_role");
-			LOG.info("alibaba " + loggedInRole);
 			String targetStatus = targetUser.getString("account_status");
-			LOG.info("aqui "+ targetStatus);
 
 			if (targetStatus.equals(data.newState.toUpperCase())) {
 				txn.rollback();
 				return Response.status(Status.BAD_REQUEST).entity("The user already has this state").build();
 			}
 			if (canUpdateStatus(loggedInRole,targetStatus,data.newState.toUpperCase())) {
-				Entity updatedUser = updateUserStatus(targetUser, data.newState);
+				Entity updatedUser = updateUserStatus(targetUser, data.newState.toUpperCase());
 				txn.put(updatedUser);
 				txn.commit();
 				return Response.ok().entity("Status updated successfully").build();
@@ -276,11 +206,8 @@ public class ComputationResource {
 	private boolean canUpdateStatus(String loggedInRole, String targetStatus, String newState ){
 		try {
 			Roles logged = Roles.valueOf(loggedInRole);
-			LOG.info("pilao " + logged);
 			States target = States.valueOf(targetStatus);
-			LOG.info("pilar " + logged);
 			States newS = States.valueOf(newState);
-			LOG.info("pilas " + logged);
 			// BACKOFFICE
 			if (logged == Roles.BACKOFFICE) {
 				return (target == States.ATIVADA || target == States.DESATIVADA)
@@ -291,5 +218,54 @@ public class ComputationResource {
 		} catch (IllegalArgumentException e) {
 			return false;
 		}
+	}
+
+	@POST
+	@Path("/listUsers")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response listUsers(@Context HttpServletRequest request) {
+
+		AuthToken token = (AuthToken) request.getAttribute("authToken");
+
+		String role = token.role;
+
+		Query<Entity> query;
+
+		if (Roles.ENDUSER.toString().equals(role)) {
+			query = Query.newEntityQueryBuilder()
+					.setKind("User")
+					.setFilter(CompositeFilter.and(
+							PropertyFilter.eq("user_role", "ENDUSER"),
+							PropertyFilter.eq("user_privacy", "publico"),
+							PropertyFilter.eq("account_status", "ATIVADA")
+					))
+					.build();
+		} else if (Roles.BACKOFFICE.toString().equals(role)) {
+			query = Query.newEntityQueryBuilder()
+					.setKind("User")
+					.setFilter(PropertyFilter.eq("user_role", "ENDUSER"))
+					.build();
+		} else if (Roles.ADMIN.toString().equals(role)) {
+			query = Query.newEntityQueryBuilder()
+					.setKind("User")
+					.build();
+		} else {
+			return Response.status(Status.FORBIDDEN).entity("Not authorized to list users").build();
+		}
+
+		QueryResults<Entity> results = datastore.run(query);
+		List<ListUsersData> usersList = new ArrayList<>();
+
+		while (results.hasNext()) {
+			Entity user = results.next();
+
+			if (Roles.ENDUSER.toString().equals(role)) {
+				usersList.add(new ListUsersData(user.getKey().getName(), user.getString("user_email"), user.getString("user_name")));
+			} else {
+				usersList.add(new ListUsersData(user));
+			}
+		}
+
+		return Response.ok(g.toJson(usersList)).build();
 	}
 }

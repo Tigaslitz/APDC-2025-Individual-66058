@@ -3,6 +3,7 @@ package resources;
 import com.google.appengine.repackaged.org.apache.commons.codec.digest.DigestUtils;
 import com.google.cloud.datastore.*;
 import com.google.gson.Gson;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Consumes;
@@ -34,15 +35,8 @@ public class UpdateResource {
     @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response changeAttributes(ChangeAttributesData data,
-                                     @Context HttpHeaders headers) {
-        AuthToken token;
-        try {
-            String authHeader = headers.getHeaderString("Authorization");
-            String tokenStr = authHeader.substring("Bearer ".length());
-            token = g.fromJson(tokenStr, AuthToken.class);
-        }catch (Exception e){
-            return Response.status(Status.UNAUTHORIZED).entity("Invalid token").build();
-        }
+                                     @Context HttpServletRequest request) {
+        AuthToken token = (AuthToken) request.getAttribute("authToken");
 
         if (!data.validRegistration())
             return Response.status(Status.BAD_REQUEST).entity("Parameters invalid").build();
@@ -51,20 +45,14 @@ public class UpdateResource {
         String targetUsername = data.targetUsername != null ? data.targetUsername : token.username;
         boolean isSelf = token.username.equals(targetUsername);
 
-        LOG.fine("pila " + isSelf);
 
         Key userKey = datastore.newKeyFactory().setKind("User").newKey(targetUsername);
         Key loggedKey = datastore.newKeyFactory().setKind("User").newKey(token.username);
         Transaction txn = datastore.newTransaction();
 
-        LOG.fine("pila gorda");
         try {
             Entity user = txn.get(userKey);
-
-            LOG.fine("pila gorda");
             Entity loggedUser = txn.get(loggedKey);
-
-            LOG.fine("pila gorda");
 
             if (user == null) {
                 txn.rollback();
@@ -106,9 +94,9 @@ public class UpdateResource {
 
             //BACKOFFICE
             if(loggedInRole.equals(Roles.BACKOFFICE) || loggedInRole.equals(Roles.ADMIN)) {
-                if (data.role != null)
+                if (data.role != null && !isSelf)
                     builder.set("user_role", data.role.toUpperCase());
-                if (data.accountStatus != null)
+                if (data.accountStatus != null && !isSelf)
                     builder.set("account_status", data.accountStatus.toUpperCase());
                 if (data.name != null)
                     builder.set("user_name",data.name);
@@ -141,17 +129,9 @@ public class UpdateResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response changePassword(ChangePasswordData data,
-                                   @Context HttpHeaders headers) {
+                                   @Context HttpServletRequest request) {
 
-        AuthToken token;
-        try {
-            String authHeader = headers.getHeaderString("Authorization");
-            String tokenStr = authHeader.substring("Bearer ".length());
-            token = g.fromJson(tokenStr, AuthToken.class);
-        } catch (Exception e) {
-            return Response.status(Status.UNAUTHORIZED).entity("Invalid token").build();
-        }
-
+        AuthToken token = (AuthToken) request.getAttribute("authToken");
         String username = token.username;
         Key userKey = datastore.newKeyFactory().setKind("User").newKey(username);
         Transaction txn = datastore.newTransaction();

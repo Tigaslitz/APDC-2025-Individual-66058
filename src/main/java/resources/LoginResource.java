@@ -166,7 +166,7 @@ public class LoginResource {
 						now.getSeconds() + 30 * 60,
 						now.getNanos()
 				);
-				AuthToken token = new AuthToken(data.username, role, new ValidityData(now,expiration ,verificador));
+				AuthToken token = new AuthToken(user.getKey().getName(), role, new ValidityData(now,expiration ,verificador));
 				LOG.info(LOG_MESSAGE_LOGIN_SUCCESSFUL + data.username);
 				return Response.ok(g.toJson(token)).build();
 			} else {
